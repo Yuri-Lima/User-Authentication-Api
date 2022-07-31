@@ -13,11 +13,13 @@ import {createHttpErrorHandler} from "./middleware/errorHandler";
 class App {
     public app: express.Application; // express application
     public server: http.Server | https.Server; // server
+    private port: number; // port
 
     /**
      * Constructor.
      */
     constructor() {
+        this.port = Number(process.env.HTTP_PORT);
         this.app = express();
         this.middleware();
         this.routes();
@@ -37,7 +39,9 @@ class App {
     }
 
     private createServer(): http.Server | https.Server {
-        if (config.get("https.enabled")) {
+        const HTTPS_PORT_STATUS = Boolean(process.env.HTTPS)
+        if (HTTPS_PORT_STATUS) {
+            this.port = Number(process.env.HTTPS_PORT);
             const httpsOptions = {
                 key: "",
                 cert: "",
@@ -52,22 +56,24 @@ class App {
     public async start(): Promise<void> {
         const MONGO_URI = <string>process.env.MONGO_URI_LOCAL;
         await connectToDb(MONGO_URI);
-        this.server.listen(config.get("port"), () => {
-            logDebug.info(`Server started on port ${config.get("port")}`);
-            loggerFile.info(`Server started on port ${config.get("port")}`);
+        this.server.listen(this.port, () => {
+            logDebug.info(`Server started on port ${this.port}`);
+            loggerFile.info(`Server started on port ${this.port}`);
         }).on("error", (error: any) => {
             logDebug.error(`Error starting server ${error}`);
             loggerFile.info(`Error starting server ${error}`);
         }).on("listening", () => {
-            logDebug.info(`Server listening on port ${config.get("port")}`);
-            loggerFile.info(`Server listening on port ${config.get("port")}`);
+            logDebug.info(`Server listening on port ${this.port}`);
+            loggerFile.info(`Server listening on port ${this.port}`);
         }).on("close", () => {
             logDebug.error(`Server closed`);
             logDebug.error(`Server closed`);
         })
     
     }
-}   
+}
+const start = new App();
+start.start();
             
             
             
