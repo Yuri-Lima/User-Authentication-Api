@@ -2,28 +2,83 @@ require("dotenv").config();
 import http from "http";
 import https from "https";
 import express, { ErrorRequestHandler, Request, Response, NextFunction, RequestHandler, RequestParamHandler } from "express";
-import config from "config";
+import path, { join, resolve } from "node:path";
 import connectToDb from "./utils/connectToDb";
-import { logDebug, loggerFile } from "./utils/logger";
+import Logger from "./utils/logger";
 import router from "./routes/index";
 import {deserializeUser} from "./middleware/deserializeUser";
 import {rules} from "./middleware/accessControlAllow";
 import {createHttpErrorHandler} from "./middleware/errorHandler";
+import {JsonToEnv, Options_Set_Env, Set_Env} from "dynamic.envs";
 
-class App {
+export const logfile = new Logger(true).loggerFile();
+export const log = new Logger(true).loggerConsole();
+
+
+/**
+ * @shortDescription - This is the main Class of the application
+ * @class App
+ * @implements {express.Application}
+ * @implements {http.Server}
+ * @implements {https.Server}
+ */
+
+export default class App {
     public app: express.Application; // express application
     public server: http.Server | https.Server; // server
-    private port: number; // port
+    public is_docker_setup: boolean;
+    public env: {} | [];
+    public port: number; // port
+    public protocol: string;
+    public node_env: boolean;
 
     /**
      * Constructor.
      */
     constructor() {
-        this.port = Number(process.env.HTTP_PORT);
+        this.node_env = process.env.NODE_ENV==="production"?true:false;
+        this.createEnvFile();
+        this.setupEnv();
         this.app = express();
         this.middleware();
         this.routes();
         this.server = this.createServer();
+    }
+    private createEnvFile(): void {
+        const fileName = "env.ts"; 
+        const set:Set_Env = {
+            fileName: fileName,
+            filePath: join(process.cwd(), "src", fileName),
+        };
+        const options:Options_Set_Env ={
+            test: false,
+            updateNewJsonFile: false, // If you want to create a new json file, set this to true
+            createNewEnvFile: true, // If you want to create a new env file, set this to true
+            useCache: false // If you want to use the cache to compare the previous json file and the new json file
+        }
+        const setEnv = new JsonToEnv(set, options);
+        setEnv.setEnv();
+    }
+
+    private setupEnv(): void {
+        if(this.node_env){//Production mode
+            this.is_docker_setup = Boolean(process.env.DEV_IS_DOCKER_SETUP==="false"?false:true);
+            if (this.is_docker_setup) {
+                console.log(`DOCKER is SETUP`);
+                this.protocol = process.env.DEV_DOCKER_TLS_SSL==="true"?"https":"http";
+                this.port = this.protocol==="https"?Number(process.env.DEV_DOCKER_HTTPS_PORT):Number(process.env.DEV_DOCKER_HTTP_PORT);
+            }
+            else{
+                console.log("DOCKER is NOT SETUP");
+                this.protocol = process.env.DEV_DOCKER_TLS_SSL==="true"?"https":"http";
+                this.port = this.protocol==="https"?Number(process.env.DEV_HTTPS_PORT):Number(process.env.DEV_HTTP_PORT);
+            }   
+        }
+        else{//LOCAL mode
+            this.port = Number(process.env.DEV_HTTP_PORT);
+            console.log("LOCAL is SETUP");
+
+        }
     }
 
     private middleware(): void {
@@ -39,9 +94,8 @@ class App {
     }
 
     private createServer(): http.Server | https.Server {
-        const HTTPS_PORT_STATUS = Boolean(process.env.HTTPS)
-        if (HTTPS_PORT_STATUS) {
-            this.port = Number(process.env.HTTPS_PORT);
+        const value = this.protocol==="https"?true:false;
+        if (value) {
             const httpsOptions = {
                 key: "",
                 cert: "",
@@ -54,103 +108,26 @@ class App {
     }
 
     public async start(): Promise<void> {
-        const MONGO_URI = <string>process.env.MONGO_URI_LOCAL;
+        const MONGO_URI = <string>process.env.DEV_MONGO_URI;
         await connectToDb(MONGO_URI);
         this.server.listen(this.port, () => {
-            logDebug.info(`Server started on port ${this.port}`);
-            loggerFile.info(`Server started on port ${this.port}`);
+            log.info(`Server started on port ${this.port}`);
+            logfile.info(`Server started on port ${this.port}`);
         }).on("error", (error: any) => {
-            logDebug.error(`Error starting server ${error}`);
-            loggerFile.info(`Error starting server ${error}`);
+            log.error(`Error starting server ${error}`);
+            logfile.info(`Error starting server ${error}`);
         }).on("listening", () => {
-            logDebug.info(`Server listening on port ${this.port}`);
-            loggerFile.info(`Server listening on port ${this.port}`);
+            log.info(`Server listening on port ${this.port}`);
+            logfile.info(`Server listening on port ${this.port}`);
         }).on("close", () => {
-            logDebug.error(`Server closed`);
-            logDebug.error(`Server closed`);
+            log.error(`Server closed`);
+            logfile.error(`Server closed`);
         })
-    
     }
 }
+
 const start = new App();
-start.start();
-            
-            
-            
-// export default Set_Env(Object(process.env));
-// const app = express(); // create express app
-// const httpServer = http.createServer(app); // create http server
-// const httpsServer = https.createServer(app); // create https server
-/**
- * Url Encoded.
- */
-// app.use(express.urlencoded({ extended: false })); // add url encoded to the application as middleware
-/**
- * @description - Parsing application/json
- */
-// app.use(express.json());
-/**
- * @description - middleware to deserialize user from token
- */
-// app.use(deserializeUser);
-/**
- * Router of the application.
- */
-// app.use(router);
-/**
- * Rules of the application.
- */
-// const rules= (req:Request, res:Response, next:NextFunction) => {
-//     console.log("Rules of the application.");
-//     res.header("Access-Control-Allow-Origin", "*");
-//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-//     if (req.method === "OPTIONS") {
-//         res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
-//         return res.status(200).json({}).on("finish", () => {
-//             logDebug.debug(`${req.method} ${req.originalUrl} - ${res.statusCode}`);
-//         });
-//     }
-//     return next();
-// };
-// app.use(rules); // add rules to the application as middleware
 
-/**
- * Error Request Handler.
- */
-// const createHttpErrorHandler = (req:Request, res:Response, next:NextFunction) => {
-//     next(new httpErrorHandler.NotFound());  // create a new NotFound error
-// }
-// app.use(createHttpErrorHandler);
-// const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
-//     console.log("Error handler.");
-//     res.status(err.status || 500)
-//     res.send({
-//             status: err.status || 500,
-//             message: err.message || "Internal Server Error",
-//     })
-//     res.on("finish", () => {
-//         logDebug.debug(`${req.method} ${req.originalUrl} - ${res.statusCode}`);
-//     });
-// };
-// app.use(errorHandler); // add error handling to the application as middleware
-
-// const HTTP_PORT = Boolean(process.env.TS_NODE_DEV)?process.env.HTTP_PORT:process.env.HTTPS_PORT;// get port from environment variables
-
-/**
- * Start the server listening on port HTTP_PORT.
- * Connect to the database.
- * Set the development mode.
- * @param port - Port number.
- * @param callback - Callback function.
- * @returns - Promise.
- */
-// httpServer.listen(HTTP_PORT, () => {
-//     logDebug.info(`HTTP Server started on port ${HTTP_PORT}`);
-//     let MONGO_URI = `${process.env.MONGO_URI_LOCAL}`;
-//     connectToDb(MONGO_URI);
-// });
-// const HTTPS_PORT = process.env.HTTPS_PORT;
-// httpsServer.listen(HTTPS_PORT, async () => {
-//     logDebug.debug(`HTTPS Server started on port ${HTTPS_PORT}`);
-//     connectToDb();
-// });
+(async () => {
+    await start.start();
+})()
