@@ -40,6 +40,7 @@ export default class App {
         this.routes();
         this.server = this.createServer();
     }
+
     private createEnvFile(): void {
         const fileName = "env.ts"; 
         const set:Set_Env = {
@@ -63,18 +64,14 @@ export default class App {
                 console.log(`DOCKER is SETUP`);
                 this.protocol = process.env.DEV_DOCKER_TLS_SSL==="true"?"https":"http";
                 this.port = this.protocol==="https"?Number(process.env.DEV_DOCKER_HTTPS_PORT):Number(process.env.DEV_DOCKER_HTTP_PORT);
+                return;
             }
-            else{
-                console.log("DOCKER is NOT SETUP");
-                this.protocol = process.env.DEV_DOCKER_TLS_SSL==="true"?"https":"http";
-                this.port = this.protocol==="https"?Number(process.env.DEV_HTTPS_PORT):Number(process.env.DEV_HTTP_PORT);
-            }   
         }
-        else{//LOCAL mode
-            this.port = Number(process.env.DEV_HTTP_PORT);
-            console.log("LOCAL is SETUP");
-
-        }
+        //LOCAL mode
+        console.log("LOCAL is SETUP");
+        this.protocol = process.env.DEV_DOCKER_TLS_SSL==="true"?"https":"http";
+        this.port = this.protocol==="https"?Number(process.env.DEV_HTTPS_PORT):Number(process.env.DEV_HTTP_PORT);
+        return;           
     }
 
     private middleware(): void {

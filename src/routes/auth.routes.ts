@@ -18,7 +18,6 @@ router.post("/api/sessions/refresh", refreshAccessTokenHandler);
 
 router.get("/", (req: Request, res: Response) => {
     res.send("The server is up and running\n");
-    
 });
 
 

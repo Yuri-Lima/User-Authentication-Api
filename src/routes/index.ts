@@ -5,7 +5,6 @@ import user from "./user.routes";
 
 const router = Router();
 
-
 router.use(healthcheck);
 router.use(auth);
 router.use(user);
