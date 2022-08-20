@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyJwt } from "../utils/jwt";
-import { logDebug } from "../utils/logger";
+import { log, logfile } from "../utils/logger";
 
 /**
  * Headers accept x-access-token, authorization, x-authorization.
@@ -19,7 +19,7 @@ export const deserializeUser = async (req: Request, res:Response, next:NextFunct
         //             message: "Unauthorized"
         //         })
         //         .on("finish", () => {
-        //             logDebug.debug(`${req.method} ${req.originalUrl} - ${res.statusCode}`);
+        //             log.debug(`${req.method} ${req.originalUrl} - ${res.statusCode}`);
         //         });   
         // }
         return next();

@@ -1,7 +1,6 @@
 //https://sematext.com/blog/node-js-error-handling/
 import { Request, Response, NextFunction } from "express"
 import httpErrorHandler from "http-errors";
-import { logDebug } from "../utils/logger";
 
 /**
  * Error Request Handler.

@@ -1,5 +1,5 @@
 import UserModel, { User } from "../model/user.model";
-import { logDebug } from "../utils/logger";
+import { log, logfile } from "../utils/logger";
 
 /**
  * Partial is because we only want to send the fields that we want to update/create.
@@ -7,7 +7,7 @@ import { logDebug } from "../utils/logger";
  * @returns 
  */
 export function createUser(input: Partial<User>) {
-    logDebug.debug(`createUser: ${JSON.stringify(input)}`);
+    log.debug(`createUser: ${JSON.stringify(input)}`);
     return UserModel.create(input);
 }
 /**

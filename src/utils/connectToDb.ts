@@ -1,15 +1,15 @@
 import mongoose from 'mongoose';
 import config from 'config';
-import { logDebug, loggerFile } from './logger';
+import { log, logfile } from './logger';
 
 async  function connectToDb(MONGO_URI_LOCAL: string) {    
     try {
         if (process.env.NODE_ENV === 'production') {
-            const URI = `${process.env.MONGO_URI}`;
+            const URI = `${process.env.DEV_MONGO_URI}`;
             const conn = await mongoose.connect(URI);
             
-            logDebug.info(`Connected to external ${conn.STATES}`);
-            loggerFile.db(`Connected to external ${URI}`);
+            log.info(`Connected to external ${conn.STATES}`);
+            logfile.info(`Connected to external ${URI}`);
         }
         else if (process.env.NODE_ENV === 'development') {
             const conn = await mongoose.connect(MONGO_URI_LOCAL, {
@@ -31,17 +31,17 @@ async  function connectToDb(MONGO_URI_LOCAL: string) {
                 enableUtf8Validation: true,//This is to enable UTF-8 validation.
                 zlibCompressionLevel: 8//This is to set the compression level.
             });
-            logDebug.info(`Connected to local ${MONGO_URI_LOCAL}`);
-            loggerFile.db(`Connected to local ${MONGO_URI_LOCAL}`);
+            log.info(`Connected to local ${MONGO_URI_LOCAL}`);
+            logfile.info(`Connected to local ${MONGO_URI_LOCAL}`);
         }
     } catch (error:any) {
         /**
          * Gracefully handle mongoose connection errors
          * @see https://mongoosejs.com/docs/guide.html#error-handling
          */
-        logDebug.error(`Error connecting to ${error}`);
-        loggerFile.db(`Error connecting to ${error}`);
-        // process.exit(1);
+        log.error(`Error connecting to ${error}`);
+        logfile.error(`Error connecting to ${error}`);
+    // process.exit(1);
     }
 }
 export default connectToDb;

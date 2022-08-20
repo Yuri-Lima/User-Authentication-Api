@@ -9,14 +9,14 @@
  * Or Push Notifications.
  */
 import nodemailer, { SendMailOptions } from 'nodemailer';
-import { logDebug } from './logger';
+import { log, logfile } from './logger';
 /**
  * This is a fake SMTP server.
  * Only to get settings for the SMTP server.
  */
 async function creaTestCreds(){
     const creds = await nodemailer.createTestAccount();
-    logDebug.debug(JSON.stringify(creds),"creds");
+    log.debug(JSON.stringify(creds),"creds");
 }
 // creaTestCreds();
 
@@ -45,11 +45,11 @@ const transport = nodemailer.createTransport({
 async function sendEmail(payload:SendMailOptions){
     transport.sendMail(payload, (error, info) => {
         if(error) {
-            logDebug.error(error, "error sending email");
+            log.error(error, "error sending email");
             return;
         }
-        logDebug.debug(info, "info sending email");
-        logDebug.debug(`Preview URL: ${nodemailer.getTestMessageUrl(info)}`);
+        log.debug(info, "info sending email");
+        log.debug(`Preview URL: ${nodemailer.getTestMessageUrl(info)}`);
         return true;
     })
 

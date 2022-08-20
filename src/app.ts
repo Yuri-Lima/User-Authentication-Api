@@ -4,16 +4,12 @@ import https from "https";
 import express, { ErrorRequestHandler, Request, Response, NextFunction, RequestHandler, RequestParamHandler } from "express";
 import path, { join, resolve } from "node:path";
 import connectToDb from "./utils/connectToDb";
-import Logger from "./utils/logger";
+import { log, logfile } from "./utils/logger";
 import router from "./routes/index";
 import {deserializeUser} from "./middleware/deserializeUser";
 import {rules} from "./middleware/accessControlAllow";
 import {createHttpErrorHandler} from "./middleware/errorHandler";
 import {JsonToEnv, Options_Set_Env, Set_Env} from "dynamic.envs";
-
-export const logfile = new Logger(true).loggerFile();
-export const log = new Logger(true).loggerConsole();
-
 
 /**
  * @shortDescription - This is the main Class of the application

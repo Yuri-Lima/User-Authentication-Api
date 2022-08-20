@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import {logDebug } from "../utils/logger";
+import { log, logfile } from "../utils/logger";
 
 /**
  * It’s generally a best practice to provide this name wherever you can to have more readable stack traces.
@@ -17,6 +17,6 @@ export const healthcheck: RequestHandler = async function healthcheck(req, res, 
             message: message
         })
         .on("finish", () => {
-            logDebug.debug(`${req.method} ${req.originalUrl} - ${res.statusCode}`);
+            log.debug(`${req.method} ${req.originalUrl} - ${res.statusCode}`);
         });
 };

@@ -9,7 +9,7 @@ import { createSessionInput } from "../schema/auth.schema";
 import { findSessionById, signAccessToken, signRefreshToken } from "../services/auth.service";
 import { findUserByEmail, findUserById } from "../services/user.service";
 import { verifyJwt } from "../utils/jwt";
-import { logDebug } from "../utils/logger";
+import { log, logfile } from "../utils/logger";
 
 
 /**
@@ -54,7 +54,7 @@ export async function createSessionHandler (req:Request<{},{},createSessionInput
          * Sign a access token.
          */
         const accessToken = signAccessToken(user);
-        logDebug.debug(`createSessionHandler: Email: ${email}\nPassword: ${password}\nUser: ${user}\nValid: ${isValid}\nAccessToken: ${accessToken}`);
+        log.debug(`createSessionHandler: Email: ${email}\nPassword: ${password}\nUser: ${user}\nValid: ${isValid}\nAccessToken: ${accessToken}`);
 
         /**
          * Sign a refresh token.

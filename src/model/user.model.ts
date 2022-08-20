@@ -5,7 +5,7 @@
 import { prop, getModelForClass, modelOptions, Severity, pre, DocumentType, index } from "@typegoose/typegoose";
 import { nanoid } from "nanoid";
 import argo2 from "argon2";
-import { logDebug } from "../utils/logger";
+import { log, logfile } from "../utils/logger";
 
 /**
  * Hide the private fields from the user.
@@ -69,7 +69,7 @@ export class User {
         try {
             return await argo2.verify(this.password, candidatePassword); //Compare the password with the hash returning true or false.
         } catch (error: any) {
-            logDebug.warn(error, "count not validate password");
+            log.warn(error, "count not validate password");
             return false;
         }
     }

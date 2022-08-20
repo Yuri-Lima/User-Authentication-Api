@@ -3,7 +3,6 @@ import { Document } from "mongoose";
 import SessionModel from "../model/session.model";
 import { privateFields, User } from "../model/user.model";
 import { signJwt } from "../utils/jwt";
-import { logDebug } from "../utils/logger";
 
 /**
  * If the access token is expired, we will refresh it.

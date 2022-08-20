@@ -1,12 +1,12 @@
-import { logDebug } from "./logger";
+import { log, logfile } from "./logger";
 
 
 export const devMode = (mode: Boolean) => {
     if (mode) {
-        logDebug.info("Development mode is ON");
+        log.info("Development mode is ON");
         return true;
     } else {
-        logDebug.info("Production mode is ON");
+        log.info("Production mode is ON");
         return false
     }
 };
@@ -70,7 +70,7 @@ export interface Env {
 }
 
 export const Set_Env = async (env: Partial<Env>) => {
-    logDebug.info("Environment variables are set");
+    log.info("Environment variables are set");
     return {
         // App Local Settings
         node_env: env.NODE_ENV,

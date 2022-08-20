@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import { nanoid } from 'nanoid';
 import { CreateUserInput, ForgotPasswordInput, ResetPasswordInput, VerifyUserInput } from '../schema/user.schema';
 import { createUser, findUserByEmail, findUserById } from '../services/user.service';
-import { logDebug, loggerFile } from '../utils/logger';
+import { log, logfile } from '../utils/logger';
 import sendEmail from '../utils/mailer';
 
 /**
@@ -12,7 +12,7 @@ export async function createUserHandler(req: Request<{},{},CreateUserInput,{}>, 
     const body = req.body;
     try {
         const user = await createUser(body);
-        logDebug.debug(`createUserHandler: ${user}`);
+        log.debug(`createUserHandler: ${user}`);
         // await sendEmail({
         //     from: 'y.m.lima19@gmail.com',
         //     to: user.email,
@@ -27,7 +27,7 @@ export async function createUserHandler(req: Request<{},{},CreateUserInput,{}>, 
             message: "User created successfully",
             user: user
         }).on('finish', () => {
-            logDebug.debug(`${req.method} ${req.originalUrl} - ${res.statusCode}`);
+            log.debug(`${req.method} ${req.originalUrl} - ${res.statusCode}`);
         });
     } catch (error:any) {
         if(error.code === 11000) {
@@ -104,8 +104,8 @@ export async function forgotPasswordHandler(req: Request<{},{},ForgotPasswordInp
     try {
         const user = await findUserByEmail(email);
         if(!user) {
-            logDebug.warn(`User with email ${email} not found`);//Log the warning.
-            loggerFile.warn(`User with email ${email} not found`);//Write the warning to the log file. 
+            log.warn(`User with email ${email} not found`);//Log the warning.
+            logfile.warn(`User with email ${email} not found`);//Write the warning to the log file. 
             return res.status(201).json({
                 message: message
             });
@@ -139,13 +139,13 @@ export async function forgotPasswordHandler(req: Request<{},{},ForgotPasswordInp
             messageId: `${nanoid()}`,
             priority: 'high',
         });
-        logDebug.info(`User with email ${email} has requested to reset his password`);//Log the info.
+        log.info(`User with email ${email} has requested to reset his password`);//Log the info.
         return res.status(200).json({
             message: message
         });
     }
     catch (error:any) {
-        loggerFile.error(`Error while resetting password for user with email ${email}`);//Write the error to the log file.
+        logfile.error(`Error while resetting password for user with email ${email}`);//Write the error to the log file.
         return res.status(500).json({
             error: error,
             message: "Something went wrong could be the [ Email sending failed or the user email does not exist ]"
@@ -182,11 +182,11 @@ export async function resetPasswordHandler(req: Request<ResetPasswordInput["para
 }
 
 export async function getCurrentUserHandler(req: Request, res: Response) {
-    logDebug.info(`User has requested to get his profile`);//Log the info.
+    log.info(`User has requested to get his profile`);//Log the info.
     return res.status(200).json({
         user_deserialized: res.locals.user
     }).on('finish', () => {
-        logDebug.info(`User has received his profile`);//Log the info.
-        logDebug.info(`${req.method} ${req.url} ${res.statusCode}`);
+        log.info(`User has received his profile`);//Log the info.
+        log.info(`${req.method} ${req.url} ${res.statusCode}`);
     });
 }

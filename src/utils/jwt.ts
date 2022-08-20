@@ -1,8 +1,6 @@
 import jwt from 'jsonwebtoken';
 import config from "config";
-import {
-    logDebug
-} from './logger';
+import { log, logfile } from './logger';
 
 /**
  * Encodes a JWT token with the given payload and secret.
