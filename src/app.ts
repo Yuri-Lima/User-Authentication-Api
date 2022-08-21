@@ -32,7 +32,7 @@ export default class App {
      * Constructor.
      */
     constructor() {
-        this.node_env = process.env.NODE_ENV==="production"?true:false;
+        this.node_env = process.env.NODE_ENV==="development"?true:false;
         this.createEnvFile();
         this.setupEnv();
         this.app = express();
@@ -63,7 +63,7 @@ export default class App {
             if (this.is_docker_setup) {
                 console.log(`DOCKER is SETUP`);
                 this.protocol = process.env.DEV_DOCKER_TLS_SSL==="true"?"https":"http";
-                this.port = this.protocol==="https"?Number(process.env.DEV_DOCKER_HTTPS_PORT):Number(process.env.DEV_DOCKER_HTTP_PORT);
+                this.port = this.protocol==="https"?Number(process.env.DEV_HTTPS_PORT):Number(process.env.DEV_HTTP_PORT);
                 return;
             }
         }
@@ -104,14 +104,14 @@ export default class App {
         const MONGO_URI = <string>process.env.DEV_MONGO_URI;
         await connectToDb(MONGO_URI);
         this.server.listen(this.port, () => {
-            log.info(`Server started on port ${this.port}`);
-            logfile.info(`Server started on port ${this.port}`);
+            log.info(`Server started on port ${this.port} on protocol ${this.protocol}`);
+            // logfile.info(`Server started on port ${this.port}`);
         }).on("error", (error: any) => {
             log.error(`Error starting server ${error}`);
             logfile.info(`Error starting server ${error}`);
         }).on("listening", () => {
-            log.info(`Server listening on port ${this.port}`);
-            logfile.info(`Server listening on port ${this.port}`);
+            log.info(`Server listening on port ${this.port} on protocol ${this.protocol}`);
+            // logfile.info(`Server listening on port ${this.port}`);
         }).on("close", () => {
             log.error(`Server closed`);
             logfile.error(`Server closed`);
