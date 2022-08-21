@@ -1,15 +1,16 @@
 export default {
 	"node_env":"development",
 	"version":"0.0.1",
+	"app_name":"Auth_App",
 	"dev":{
 		"tls_ssl":false,
 		"https_port":4555,
 		"http_port":9005,
-		"is_docker_setup":false,
+		"is_docker_setup":true,
 		"docker":{
 			"container_name":"node_alphine_uatiz",
 			"image_name":"node_alphine_uatiz",
-			"app_name":"auth_user",
+			"app_name":"auth_app",
 			"app_version":"0.0.1",
 			"env":"uatiz",
 			"tls_ssl":false,
@@ -27,20 +28,25 @@ export default {
 			"host":"localhost",
 			"port":27017,
 			"db_name":"uatiz",
-			"db_cotainer_name":"mongo_db_uatiz",
+			"db_cotainer_name":"mongo_alternative",
 			"user":"yurilima",
 			"password":"Laura2020",
 			"auth_source":"admin"
 		},
 		"mongo_express":{
-			"container_name":"mongo_express_uatiz",
-			"port":9007,
+			"container_name":"mongo_express_alternative",
+			"port":8081,
 			"user":"yurilima",
 			"password":"Laura2020",
 		},
 		"smtp":{
 			"host":"smtp.gmail.com",
 			"port":587,// tls port 587 or 465
+			"secure":false,
+			"auth":{
+				"user":"yurilima",
+				"pass":"Laura2020"
+			}
 		},
 		"accessTokenPrivateKey": "FLWnM3NHV6Q0dqYUVFS2ZXZGVDU3hLMkVtWGpzWlZYRlAxT1Q1ClR0dStKZTBqMTJNNnJhMWhkeUNUTXIzazRab1VBajgwOUY5aUhxcnpvRWpLQnd3bGdWTmZmay95RVJtcXlBeVgKYWNVcXhJdTRDcTREbGNpSDJuRjFFTGQ1eXNTY3pRQXlRbDZrQ00yK29wdEZHWFVjRDdFWG5IVG5BZ01CQUFFQwpnWUF4VTJrNm41K0IzMmZNV2hGbEx6THNCa0t6aWVXREtvcnFLaGgwSEkybHA4NXVwWXF4eXJTRnJWeWN3WFNDCndMMVpSSzNDY3ovMDd1NTYwZU1BYlhaa0F0SmZISVBHNW9RZUhWK0hxdUlKNlN0LzliK0IybUhPNCthOW5TSi8KNy9wamFyYlltc0x0M2JUa1lCUytIUC82WmI5MnVvb3VuZmJUVDUzS0tsL3N3UUpCQU5iUnZJSlEyVjJ1SFlNVgpQVkFEb2pSU012VDFYcHU0TXcxT1IrNG1icVZxQkpkZENzRHJqUWJLME5SS3VLTEJxMXdER3R0eDUyU25JQlNWCkFMaG9rOHNDUVFDTGliNERNc1VCM24xcmVjTlRhZDZGMWtJRUZ0c2tZcUZFOHMwaSszNVRLNmpqMjZlcjg5UlIKbDdWR3dWbTRCZ0tITlNJa0Z5eHJqM2srZ3ZzU0x0ZlZBa0JxR25vVG03OWhLQWpubit3Q3cyaXdreEVjTUwyawpDRjBlNjFWWDZaK3BFQzVvWE1wYzgzdGFxWDV2L09BcGM2TWg5VjZrbVNRRGNSREZXYnRiV2p2MUFrQTJFbVpqCmJ1VVEyRnJacnhHVjNVeXhxRmxrcEVhL1Rza1hvczhEWTFtTWVUcTFNWVZFQ1BTWnVhUXhpdk50Y0ViQ2hrQjQKbzlJK3pCWTd0eDM3NmRNUkFrRUFxVjh1aUJ1V2pvUkR3cEtyNHhGaXhacjFRMGltb1p0dGo2WXpFSGJObjg1TwpsS3o0eE83MWFtSkhpZzZtVVNHVGROMTNoSW1uMUU0Z3hWakpZY1UzUnc9PQotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQ",
 		"refreshTokenPrivateKey": "0OC9LSGpKaVY1MWhGNjRaVnQ3UGJic0xrVUo0ZVNuQWJCYlZJWmFCCnBSVzdhdTRqMGhQbUtmVEYzUnpVV3hTeGdDMkJ3Y3ZIdStadm5HTm1HY016R2phQnZNWXNZMkV2UkNXeVNNUHQKYkZrOEhOSWRUQnFQTGQ1MVBOc1pVejd3ZmxkNVlGUXgvNUY5RWErb1pQQXBpT05TRk8wN0VoNTFBZ01CQUFFQwpnWUErODA4R25mMG9OOXBYQi9oSi80OEMwaFljOWU3eGdGZExlMWhuc2NXMmlvVWd2YThLV2owbUF0U2tEbTYrCnkvdEZtN1JseGxnUXhBaTNZSU9VTi92V0l6T3lNeGgvbFN1RlRJWkZNeDUra1FBNHBXbHhzTThLdVFIbEdJLzIKUTRMaTZIWTVjYzNJTk8xakdTNG40azFaaXArZllJUGRJczBqNGxUWm9DdVZoUUpCQU04NkpUV1ZxbzFlUVVDTApuVlk5Q3Z1a2x3b0VlN3MwdEd6blB2bHk0K1JRMHF1dlh2OU0zV3lxZ3loaHkwRldFNm5WRzFOZXJUU1BpN3FRCkRzSUZLQzhDUVFDYWR4SnlnYXVYekhjSzdrQU1OUlN1MDMxRDJER3RwVWxOWkkrYk0yOEQvTERVS21ZREpJSVEKcnRmYmxFRkt6eWRZcDZSMkpRc1F3NEd4Nkptdy9WYWJBa0VBaU5YQk9qZmd6Y1orV2V1Vzhob094WW15UG1nbApkOEZlbmthNE82bFV1Qzl5WFBISlRkVm9wTmVYRWJRNXJhUDBDZ0h4TUVUbEpEN2hLa2p6cGNRWCt3SkFRRjgvCklObEpXWW1zVXJIWG56Ni96OXZ6YUVMQThVemdyNUFwQ05UMmZ3TGY3b3Q4MS9KdkFlVGJzSGFvZnpTMWdRemMKVFNCQzdFbU4wMGJNUmlaTjRRSkFhTWxsM1BEanRJV2p5bnM0U3BLTmRIdmp2VVRRR3VxWUpLcytoZGhHSGdQYwpSU01mNGxYSFFYU0l3K3F5eXU1eS9Mdm9EbUhMZUFmZW5JQTlpaG9XUnc9PQotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQ",
