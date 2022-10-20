@@ -4,7 +4,12 @@
 
 import { prop, getModelForClass, modelOptions, Severity, pre, DocumentType, index } from "@typegoose/typegoose";
 import { nanoid } from "nanoid";
-import argo2 from "argon2";
+/**
+ * This library is used to hash the password. However, we are not gonna use it in this project. Because we are gonna use the library bcryptjs instead.
+ * Problems with ARGON2: to has the passsword. It is not supported somehow. 
+ * */
+// import * as argon2 from "argon2";
+import bcrypt from "bcrypt"; // We are gonna use this library instead of argon2
 import { log, logfile } from "../utils/logger";
 
 /**
@@ -17,13 +22,29 @@ export const privateFields = [
     "__v",// This is to make sure that the version is not shown in the response.
     "verified"// This is to make sure that the user is verified.
 ];
-
-@pre<User>("save", async function () {
-    if (!this.isModified("password")) return;
-    this.password = await argo2.hash(this.password);
-    return;
+/**
+ * Pre save hook.
+ * This is a hook that is gonna run before the user is saved.
+ * We are gonna hash the password before the user is saved.
+ * We are gonna use the bcryptjs library to hash the password.
+ * The User Class is gonna be the target which is gonna provide THIS.VARIABLE.
+ */
+@pre<User>("save", function () {
+    try {
+        const saltRounds = 12; // This is the number of rounds that the password is gonna be hashed.
+        if (!this.isModified("password")) return; // If the password is not modified, then we dont need to hash it.
+        const salt = bcrypt.genSaltSync(saltRounds); // Generate a salt
+        const hash = bcrypt.hashSync(this.password, salt); // Hash the password
+        // const hash = await argon2.hash(this.password, {type: argon2.argon2id});
+        this.password = hash; // Set the password to the hash
+        log.debug(`User pre save hook: ${JSON.stringify(this.password)}`);
+        return;
+    } catch (error: any) {
+        log.error(`User pre save hook error: ${error}`);
+        throw error;
+    }
 })
-@index({ email: 1 }) //Index the email field. This will make sure that the email is unique.
+@index({ email: 1 },{unique: true}) //Index the email field. This will make sure that the email is unique.
 @modelOptions({
     schemaOptions: {
         timestamps: true,
@@ -39,7 +60,7 @@ export class User {
     email: string;
 
     @prop({ required: true })
-    fisrtName: string;
+    firstName: string;
 
     @prop({ required: true })
     lastName: string;
@@ -49,6 +70,12 @@ export class User {
 
     @prop({ required: false })
     nickName: string;
+
+    @prop({ required: false })
+    bio: string;
+
+    @prop({ required: false })
+    otherNames: string;
 
     @prop({ required: true })
     password: string;
@@ -67,7 +94,9 @@ export class User {
 
     async validatePassword(this: DocumentType<User>, candidatePassword: string) {
         try {
-            return await argo2.verify(this.password, candidatePassword); //Compare the password with the hash returning true or false.
+            log.debug(`validatePassword: ${candidatePassword}`);
+            return bcrypt.compareSync(candidatePassword, this.password);// Compare the password with the hash returning true or false.
+            // return await argon2.verify(this.password, candidatePassword); 
         } catch (error: any) {
             log.warn(error, "count not validate password");
             return false;

@@ -27,6 +27,7 @@ services:
       DB_NAME: ${DEV_MONGO_DB_NAME}
       # Node APP Settings
       NAME: ${DEV_DOCKER_APP_NAME}
+      COMPOSE_PROJECT_NAME: ${DEV_DOCKER_APP_NAME}
       # SMTP Settings
       SMTP_DOCKER_HOST: ${DEV_SMTP_HOST}
       SMTP_DOCKER_PORT: ${DEV_SMTP_PORT}
@@ -45,6 +46,9 @@ services:
 networks:
   uatiz_network:
     driver: bridge
+  default:
+    name: mongo_and_express_mongo
+    external: true
 
 #   # MongoDB Services
 #   mongo_db_uatiz:

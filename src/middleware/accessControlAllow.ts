@@ -4,8 +4,11 @@ import { log, logfile } from "../utils/logger";
 /**
  * Rules of the application [Access-Control-Allow].
  */
+const whitelist = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+];
 export const rules= (req:Request, res:Response, next:NextFunction) => {
-    log.debug("Access-Control-Allow");
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
     if (req.method === "OPTIONS") {

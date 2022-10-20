@@ -1,7 +1,7 @@
 require("dotenv").config();
 import http from "http";
 import https from "https";
-import express, { ErrorRequestHandler, Request, Response, NextFunction, RequestHandler, RequestParamHandler } from "express";
+import express, { ErrorRequestHandler, Request, Response, NextFunction, RequestHandler, RequestParamHandler, Express, Router } from "express";
 import path, { join, resolve } from "node:path";
 import connectToDb from "./utils/connectToDb";
 import { log, logfile } from "./utils/logger";
@@ -20,12 +20,14 @@ import {JsonToEnv, Options_Set_Env, Set_Env} from "dynamic.envs";
  */
 
 export default class App {
-    public app: express.Application; // express application
+    public app: Express; // express application
+    public router: Router;
     public server: http.Server | https.Server; // server
     public is_docker_setup: boolean;
     public env: {} | [];
     public port: number; // port
     public protocol: string;
+    public host: string;
     public node_env: boolean;
 
     /**
@@ -62,8 +64,9 @@ export default class App {
             this.is_docker_setup = Boolean(process.env.DEV_IS_DOCKER_SETUP==="false"?false:true);
             if (this.is_docker_setup) {
                 console.log(`DOCKER is SETUP`);
+                this.host = process.env.DEV_HOST?process.env.DEV_HOST:"localhost";
                 this.protocol = process.env.DEV_DOCKER_TLS_SSL==="true"?"https":"http";
-                this.port = this.protocol==="https"?Number(process.env.DEV_HTTPS_PORT):Number(process.env.DEV_HTTP_PORT);
+                this.port = this.protocol==="https"?Number(process.env.DEV_DOCKER_HTTPS_PORT):Number(process.env.DEV_DOCKER_HTTP_PORT);
                 return;
             }
         }
@@ -71,7 +74,7 @@ export default class App {
         console.log("LOCAL is SETUP");
         this.protocol = process.env.DEV_DOCKER_TLS_SSL==="true"?"https":"http";
         this.port = this.protocol==="https"?Number(process.env.DEV_HTTPS_PORT):Number(process.env.DEV_HTTP_PORT);
-        return;           
+        return;      
     }
 
     private middleware(): void {
@@ -105,13 +108,11 @@ export default class App {
         await connectToDb(MONGO_URI);
         this.server.listen(this.port, () => {
             log.info(`Server started on port ${this.port} on protocol ${this.protocol}`);
-            // logfile.info(`Server started on port ${this.port}`);
         }).on("error", (error: any) => {
             log.error(`Error starting server ${error}`);
             logfile.info(`Error starting server ${error}`);
         }).on("listening", () => {
             log.info(`Server listening on port ${this.port} on protocol ${this.protocol}`);
-            // logfile.info(`Server listening on port ${this.port}`);
         }).on("close", () => {
             log.error(`Server closed`);
             logfile.error(`Server closed`);

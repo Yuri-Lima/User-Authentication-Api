@@ -6,6 +6,7 @@ import { createSessionSchema } from "../schema/auth.schema";
 
 const router = express.Router();
 /**
+ * LOGIN
  * Create a new session for the user.
  */
 router.post("/api/sessions", validateResource(createSessionSchema), createSessionHandler);

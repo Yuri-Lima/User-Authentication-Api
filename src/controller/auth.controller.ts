@@ -30,14 +30,21 @@ export async function createSessionHandler (req:Request<{},{},createSessionInput
          * Find the user by email.
          */
         const user = await findUserByEmail(email);
+        /**
+         * If the user is not found, we will send the message to the client side.
+         */
         if(!user) {
             return res.status(404).json({
-                message: message
+                message: message,
+                status: false,
+                statusCode: 404,
             });
         }
         if(!user.verified) {
             return res.status(401).json({
-                message: "Please verify your account first"
+                message: "Please verify your account first",
+                status: false,
+                statusCode: 401,
             });
         }
         /**
@@ -47,14 +54,16 @@ export async function createSessionHandler (req:Request<{},{},createSessionInput
         const isValid:boolean = await user.validatePassword(password);
          if(!isValid) {
             return res.status(401).json({
-                message: message
+                message: message,
+                status: false,
+                statusCode: 401,
             });
         }
         /**
          * Sign a access token.
          */
         const accessToken = signAccessToken(user);
-        log.debug(`createSessionHandler: Email: ${email}\nPassword: ${password}\nUser: ${user}\nValid: ${isValid}\nAccessToken: ${accessToken}`);
+        log.debug(`\nSign Access Token\ncreateSessionHandler:\nEmail: ${email}\nPassword: ${password}\nUser: ${user}\nValid: ${isValid}\nAccessToken: ${accessToken}`);
 
         /**
          * Sign a refresh token.
@@ -72,7 +81,9 @@ export async function createSessionHandler (req:Request<{},{},createSessionInput
     } catch (error:any) {
         return res.status(500).json({
             error: JSON.stringify(error),
-            message: "Session creation failed"
+            message: "Session creation failed",
+            status: false,
+            statusCode: 500,
         });
     }
 }
@@ -116,7 +127,7 @@ export async function refreshAccessTokenHandler (req:Request, res:Response){
             message: "Access token refreshed successfully",
             accessToken: accessToken
         });
-    } catch (error) {
-        
+    } catch (error:any) {
+        log.error(`refreshAccessTokenHandler: ${error}`);
     }
 }
