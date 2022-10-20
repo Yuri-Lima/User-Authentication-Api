@@ -3,6 +3,7 @@ import { Document } from "mongoose";
 import SessionModel from "../model/session.model";
 import { privateFields, User } from "../model/user.model";
 import { signJwt } from "../utils/jwt";
+import { log } from "../utils/logger";
 
 /**
  * If the access token is expired, we will refresh it.
@@ -16,12 +17,15 @@ import { signJwt } from "../utils/jwt";
  * @returns - encoded user
  */
 export function signAccessToken(user: Document<User>) {
-    const payload = user.toJSON();// toJSON is a method that converts the user to a plain object.
-    const omitedFiels = omit(payload, privateFields);//Omit the private fields from the user.
+    const payload = user.toJSON(); // toJSON is a method that converts the user to a plain object.
+    log.debug(`payload: ${JSON.stringify(payload)}`);
+    const omitedFiels = omit(payload, privateFields); //Omit the private fields from the user.
+    log.debug(`omitedFiels: ${JSON.stringify(omitedFiels)}`);
     const options = { 
         expiresIn: "15m",//This is the expiration time of the access token.
      };
     const accessToken = signJwt(omitedFiels, "accessTokenPrivateKey", options);//Create the access token.
+    // log.debug(`accessToken: ${accessToken}`);
     return accessToken;
 }
 /**

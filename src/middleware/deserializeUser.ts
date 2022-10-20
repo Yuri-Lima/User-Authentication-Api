@@ -24,8 +24,11 @@ export const deserializeUser = async (req: Request, res:Response, next:NextFunct
         // }
         return next();
     }
+    log.debug(`\nDeserialize User\naccessToken: ${accessToken}`);
     const decoded = verifyJwt(accessToken, "accessTokenPublicKey");
+    log.debug(`\ndecoded: ${JSON.stringify(decoded)}`);
     if(decoded){
+        log.debug(`\nDeserialize User\naccessToken: ${accessToken}\ndecoded: ${JSON.stringify(decoded)}`);
         res.locals.user = decoded;
     }
     return next();

@@ -16,7 +16,7 @@ async  function connectToDb(MONGO_URI_LOCAL: string) {
                         password: process.env.DEV_MONGO_PASSWORD
                     },
                     authMechanism: "DEFAULT",// "DEFAULT", "SCRAM-SHA-1", "MONGODB-CR", "PLAIN"
-                    autoIndex: false,// disable automatic indexing
+                    autoIndex: true,// disable automatic indexing 11000 duplicate key error using unique index
                     keepAlive: true,
                     serverApi: "1",//This is to make sure that the server is the latest version.
                     keepAliveInitialDelay: 300000,//300000 = 5 minutes

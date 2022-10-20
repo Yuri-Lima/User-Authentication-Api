@@ -4,7 +4,7 @@ import { log, logfile } from "../utils/logger";
 /**
  * Partial is because we only want to send the fields that we want to update/create.
  * @param input - The input is the body of the request.
- * @returns 
+ * @returns
  */
 export function createUser(input: Partial<User>) {
     log.debug(`createUser: ${JSON.stringify(input)}`);

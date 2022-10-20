@@ -28,14 +28,15 @@ interface smtp {
     pass: string,
 }
 const SMTP:smtp = {
-    host:   String(process.env.SMTP_HOST),
-    port:   Number(process.env.SMTP_PORT),
-    secure: Boolean(process.env.SMTP_SECURE),
-    user:   String(process.env.SMTP_USER),
-    pass:   String(process.env.SMTP_PASSWORD),
+    host:   String(process.env.DEV_SMTP_HOST),
+    port:   Number(process.env.DEV_SMTP_PORT),
+    secure: Boolean(process.env.DEV_SMTP_SECURE),
+    user:   String(process.env.DEV_SMTP_AUTH_USER),
+    pass:   String(process.env.DEV_SMTP_AUTH_PASS),
 }
 const transport = nodemailer.createTransport({
     ...SMTP,
+    service: 'gmail',
     auth: { user: SMTP.user, pass: SMTP.pass }
 })
 /**
@@ -45,11 +46,12 @@ const transport = nodemailer.createTransport({
 async function sendEmail(payload:SendMailOptions){
     transport.sendMail(payload, (error, info) => {
         if(error) {
-            log.error(error, "error sending email");
+            log.error(error, "Error sending email");
             return;
         }
-        log.debug(info, "info sending email");
+        log.debug(info, "\ninfo sending email");
         log.debug(`Preview URL: ${nodemailer.getTestMessageUrl(info)}`);
+        log.debug(`Message sent: ${payload.html}`);
         return true;
     })
 
