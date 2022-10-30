@@ -1,10 +1,11 @@
 {
-  "name": "user-auth-uatiz",
-  "version": "0.0.1",
-  "description": "",
+  "name": "auth",
+  "version": "0.0.2",
+  "description": "Authentication System for my apps",
+  "homepage": "www.auth.yurilima.uk",
   "main": "app.js",
   "scripts": {
-    "prod": "rm -r ./dist && npx tsc && node ./dist/src/app.js",
+    "prod": "node ./dist/src/app.js",
     "dev": "ts-node-dev --respawn --transpile-only --quiet ./src/app.ts",
     "test": "ts-node-dev --notify --respawn --transpile-only --quiet --clear ./src/test.ts"
   },
@@ -21,6 +22,18 @@
     "url": "git@github.com:Yuri-Lima/User-Authentication-Api.git"
   },
   "author": "Yuri Lima",
+  "publisher": "Yuri Lima",
+  "maintainers": [
+    {
+      "name": "Yuri Lima",
+      "email": "y.m.lima19@gmail.com",
+      "url": "https://yurilima.uk/",
+      "role": "author",
+      "contact": ""
+    }
+  ],
+  "readme": "",
+  "contributors": [],
   "license": "ISC",
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
@@ -32,7 +45,7 @@
     "@types/nodemailer": "^6.4.4",
     "@types/swagger-jsdoc": "^6.0.1",
     "@types/swagger-ui-express": "^4.1.3",
-    "dynamic.envs": "^0.0.6",
+    "dynamic.envs": "^0.0.16",
     "pino-pretty": "^8.1.0",
     "swagger-jsdoc": "^6.2.5",
     "swagger-ui-express": "^4.5.0",
