@@ -88,6 +88,11 @@ export async function createSessionHandler (req:Request<{},{},createSessionInput
     }
 }
 
+/**
+ * Refresh an access token.
+ * @param req {refreshToken: string}
+ * @param res
+ */
 export async function refreshAccessTokenHandler (req:Request, res:Response){
     try {
         const refreshToken = get(req, "headers.x-refresh-token");

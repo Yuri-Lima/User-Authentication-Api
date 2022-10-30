@@ -22,11 +22,10 @@ export const deserializeUser = async (req: Request, res:Response, next:NextFunct
         //             log.debug(`${req.method} ${req.originalUrl} - ${res.statusCode}`);
         //         });   
         // }
+        log.debug(`DeserializeUser: No access token provided.`);
         return next();
     }
-    log.debug(`\nDeserialize User\naccessToken: ${accessToken}`);
     const decoded = verifyJwt(accessToken, "accessTokenPublicKey");
-    log.debug(`\ndecoded: ${JSON.stringify(decoded)}`);
     if(decoded){
         log.debug(`\nDeserialize User\naccessToken: ${accessToken}\ndecoded: ${JSON.stringify(decoded)}`);
         res.locals.user = decoded;

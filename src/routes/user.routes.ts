@@ -13,7 +13,7 @@ const router = Router();
  * @openapi
  * /api/users/register:
  *   post:
- *     tags: [RegisterUser]
+ *     tags: [Register - Verify - Forgot/Reset Password - GetCurrentUser]
  *     summary: Create a new user
  *     requestBody:
  *       required: true
@@ -45,7 +45,7 @@ router.post("/api/users/verify/:id/:verificationCode", validateResource(verifyUs
  * @openapi
  * /api/users/verify/{id}/{verificationCode}:
  *   get:
- *     tags: [VerifyUser]
+ *     tags: [Register - Verify - Forgot/Reset Password - GetCurrentUser]
  *     summary: Verify user by id and check if machs with the own verification code
  *     parameters:
  *       - in: path
@@ -92,7 +92,7 @@ router.get("/api/users/verify", validateResource(verifyUserSchemaGet), verifyUse
  * @openapi
  * /api/users/forgot-password:
  *   post:
- *     tags: [ForgotPassword]
+ *     tags: [Register - Verify - Forgot/Reset Password - GetCurrentUser]
  *     summary: Request the code to reset the password
  *     requestBody:
  *      required: true
@@ -124,7 +124,7 @@ router.post("/api/users/forgot-password", validateResource(forgotPasswordSchema)
  * @openapi
  * /api/users/reset-password/{id}/{resetPasswordCode}:
  *   post:
- *     tags: [ResetPassword]
+ *     tags: [Register - Verify - Forgot/Reset Password - GetCurrentUser]
  *     summary: User the reset password code and id to reset the password
  *     parameters:
  *       - in: path
@@ -172,6 +172,30 @@ router.post("/api/users/reset-password/:id/:resetPasswordCode", validateResource
  * We must protect the user object from the client.
  * We need to check if the user is authenticated. Before we can access the user object.
  */
+/**
+ * @openapi
+ * /api/users/me:
+ *   get:
+ *     tags: [Register - Verify - Forgot/Reset Password - GetCurrentUser]
+ *     summary: Get the deserialized user from the request should be authenticated
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/createUserSchemaResponse'
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ */ 
 router.get("/api/users/me", requireUser, getCurrentUserHandler);
 
 export default router;

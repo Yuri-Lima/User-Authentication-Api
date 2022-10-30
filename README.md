@@ -7,6 +7,11 @@
 #### The main propose for that copy is for learnings
 * [ Thanks to Tom Does Tech ](https://youtu.be/qylGaki0JhY?list=PL4vok-JSscqB9ChEMdwLSARkaSM_DaO4w)
 
+## Corrections
+* [ ] 1.1.1 - 2021-08-01 - 00:00:00 - [Yuri Lima] - Fixing the README.md file
+Fix the Page Not Found Error
+
+
 ## Features
 1. Register a user
 2. Verify user's email address

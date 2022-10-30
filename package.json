@@ -7,7 +7,8 @@
   "scripts": {
     "prod": "node ./dist/src/app.js",
     "dev": "ts-node-dev --respawn --transpile-only --quiet ./src/app.ts",
-    "test": "ts-node-dev --notify --respawn --transpile-only --quiet --clear ./src/test.ts"
+    "test": "ts-node-dev --notify --respawn --transpile-only --quiet --clear ./src/test.ts",
+    "env": "ts-node-dev --respawn --transpile-only --quiet ./updateEnv.ts"
   },
   "keywords": [],
   "engines": {

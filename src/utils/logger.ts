@@ -27,7 +27,7 @@ type Levellogger ={
 
 export default class Logger{
     private logger: LoggerOptions;
-    private level: string = <string>process.env.DEV_LOGGER_LEVEL;
+    private level: string = "db";
     private levels: Levellogger = {
         emerg: 80,
         alert: 70,
@@ -45,7 +45,7 @@ export default class Logger{
     private loggerConsole(): pinoLogerOptions {
         return pino({
             customLevels:this.levels,
-            level: process.env.DEV_LOGGER_LEVEL,
+            level: this.level,
         },
             pretty(
                 {

@@ -12,10 +12,10 @@ export function signJwt(object: Object, keyName: "accessTokenPrivateKey" | "refr
     let key_env;
     if (keyName === "accessTokenPrivateKey") {
         log.info("Signing access token");
-        key_env = process.env.DEV_ACCESSTOKENPRIVATEKEY;
+        key_env = process.env.JWT_PRIVATE_TOKEN;
     } else if (keyName === "refreshTokenPrivateKey") {
         log.info("Signing refresh token");
-        key_env = process.env.DEV_REFRESHTOKENPRIVATEKEY;
+        key_env = process.env.JWT_PRIVATE_REFRESH_TOKEN;
     }
     const refreshKey = Buffer.from(String(key_env), 'base64').toString("ascii");
     return jwt.sign(object, refreshKey, {
@@ -37,10 +37,10 @@ export function verifyJwt < T > (token: string, keyName: "accessTokenPublicKey" 
         let key_env;
         if (keyName === "accessTokenPublicKey") {
             log.info("Verifying access token");
-            key_env = process.env.DEV_ACCESSTOKENPUBLICKEY;
+            key_env = process.env.JWT_PUBLIC_TOKEN;
         } else if (keyName === "refreshTokenPublicKey") {
             log.info("Verifying refresh token");
-            key_env = process.env.DEV_REFRESHTOKENPUBLICKEY;
+            key_env = process.env.JWT_PUBLIC_REFRESH_TOKEN;
         }
         const verifyKey = Buffer.from(String(key_env), 'base64').toString("ascii");
         const decoded = jwt.verify(token, verifyKey) as T;

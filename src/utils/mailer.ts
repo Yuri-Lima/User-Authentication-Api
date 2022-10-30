@@ -28,11 +28,11 @@ interface smtp {
     pass: string,
 }
 const SMTP:smtp = {
-    host:   String(process.env.DEV_SMTP_HOST),
-    port:   Number(process.env.DEV_SMTP_PORT),
-    secure: Boolean(process.env.DEV_SMTP_SECURE),
-    user:   String(process.env.DEV_SMTP_AUTH_USER),
-    pass:   String(process.env.DEV_SMTP_AUTH_PASS),
+    host:   String(process.env.SMTP_DOCKER_HOST),
+    port:   Number(process.env.SMTP_DOCKER_PORT),
+    secure: Boolean(process.env.SMTP_DOCKER_SECURE),
+    user:   String(process.env.SMTP_DOCKER_USER),
+    pass:   String(process.env.SMTP_DOCKER_PASSWORD),
 }
 const transport = nodemailer.createTransport({
     ...SMTP,
