@@ -3,7 +3,7 @@ import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import {version} from "../../package.json";
 import { log, logfile } from "../utils/logger";
-import swaggerDocs from "../utils/swagger";
+// import swaggerDocs from "../utils/bin";
 
 const router = Router();
 
@@ -28,6 +28,9 @@ const options: swaggerJsdoc.Options = {
                 email: "y.m.lima19@gmail.com",
             },
         },
+        consumes: [
+            "application/json",
+        ],
         components: {
             securitySchemes: {
                 bearerAuth: {
@@ -35,12 +38,27 @@ const options: swaggerJsdoc.Options = {
                     scheme: "bearer",
                     bearerFormat: "JWT",
                 },
+                oauth2: {
+                    type: "oauth2",
+                    flows: {
+                        implicit: {
+                            authorizationUrl: "https://auth.yurilima.uk/api-docs",
+                            scopes: {
+                                "read:users": "read your users",
+                                "write:users": "modify users in your account",
+                            },
+                        },
+                    },
+                },
             },
         },
         security: [
             {
                 bearerAuth: [],
             },
+            {
+                oauth2: [],
+            }
         ],
         servers: [
             {

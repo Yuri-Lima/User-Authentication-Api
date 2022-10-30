@@ -104,6 +104,8 @@
     "**/*"
   ],
   "exclude": [
+    "node_modules",
+    "dist"
   ],
   // NEW: Options for file/directory watching
   "watchOptions": {

@@ -12,6 +12,8 @@ const router = Router();
  *     responses:
  *       200:
  *         description: Application is up and running
+ *       500:
+ *         description: Application is down
  */
 router.get("/api/health-check", healthcheck);
 
