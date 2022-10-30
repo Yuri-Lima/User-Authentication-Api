@@ -2,9 +2,9 @@ version: "3.9"
 services:
   # NodeJS API Services
   node:
-    container_name: ${DEV_DOCKER_CONTAINER_NAME}
+    container_name: ${PROD_DOCKER_CONTAINER_NAME}
     build: . # use the current directory as build context in the DockerFile
-    image: ${DEV_DOCKER_IMAGE_NAME}:latest
+    image: ${PROD_DOCKER_IMAGE_NAME}
     deploy:
       restart_policy: # restart the container if it exits
         condition: on-failure
@@ -12,43 +12,39 @@ services:
         max_attempts: 3
       resources: # limit the resources used by the container
         limits:
-          memory: ${DEV_DOCKER_MEMORY_LIMIT}
+          memory: ${PROD_DOCKER_MEMORY_LIMIT}
         reservations:
-          memory: ${DEV_DOCKER_MEMORY_RESERVATION}
+          memory: ${PROD_DOCKER_MEMORY_RESERVATION}
     volumes:
       - .:/usr/src/app # mount the current directory as /usr/src/app in the container
     environment:
-      PORT: ${DEV_DOCKER_HTTP_PORT}
+      PORT: ${PROD_DOCKER_HTTP_PORT}
       NODE_ENV: ${NODE_ENV}
       # MONDO Settings
-      MONGO_URI: mongodb://${DEV_MONGO_USER}:${DEV_MONGO_PASSWORD}@${DEV_MONGO_DB_COTAINER_NAME}:27017/
-      MONGO_INITDB_ROOT_PASSWORD: ${DEV_MONGO_PASSWORD}
-      MONGO_INITDB_ROOT_USERNAME: ${DEV_MONGO_USER}
-      DB_NAME: ${DEV_MONGO_DB_NAME}
+      MONGO_URI: mongodb://${PROD_MONGO_USER}:${PROD_MONGO_PASSWORD}@${PROD_MONGO_DB_COTAINER_NAME}:27017/
+      MONGO_INITDB_ROOT_PASSWORD: ${PROD_MONGO_PASSWORD}
+      MONGO_INITDB_ROOT_USERNAME: ${PROD_MONGO_USER}
+      DB_NAME: ${PROD_MONGO_DB_NAME}
       # Node APP Settings
-      NAME: ${DEV_DOCKER_APP_NAME}
-      COMPOSE_PROJECT_NAME: ${DEV_DOCKER_APP_NAME}
+      NAME: ${PROD_DOCKER_APP_NAME}
+      COMPOSE_PROJECT_NAME: ${PROD_DOCKER_APP_NAME}
       # SMTP Settings
-      SMTP_DOCKER_HOST: ${DEV_SMTP_HOST}
-      SMTP_DOCKER_PORT: ${DEV_SMTP_PORT}
-      SMTP_DOCKER_SECURE: ${DEV_SMTP_SECURE}
-      SMTP_DOCKER_USER: ${DEV_SMTP_AUTH_USER}
-      SMTP_DOCKER_PASSWORD: ${DEV_SMTP_AUTH_PASS}
+      SMTP_DOCKER_HOST: ${PROD_SMTP_HOST}
+      SMTP_DOCKER_PORT: ${PROD_SMTP_PORT}
+      SMTP_DOCKER_SECURE: ${PROD_SMTP_SECURE}
+      SMTP_DOCKER_USER: ${PROD_SMTP_AUTH_USER}
+      SMTP_DOCKER_PASSWORD: ${PROD_SMTP_AUTH_PASS}
   
     ports:
-      - ${DEV_DOCKER_HTTP_PORT}:${DEV_DOCKER_HTTP_PORT}
+      - ${PROD_DOCKER_HTTP_PORT}:${PROD_DOCKER_HTTP_PORT}
     # command: "npm run dev"
     depends_on:
-      - ${DEV_MONGO_DB_COTAINER_NAME}
-      - ${DEV_MONGO_EXPRESS_CONTAINER_NAME}
-    networks:
-      - ${DEV_DOCKER_NETWORK_NAME}
+      - ${PROD_MONGO_DB_COTAINER_NAME}
+      - ${PROD_MONGO_EXPRESS_CONTAINER_NAME}
 networks:
-  uatiz_network:
-    driver: bridge
   default:
-    name: mongo_and_express_mongo
-    external: true
+    name: ${PROD_MONGO_NETWORKS_NAME} # use the same network as the MongoDB container
+    external: true # use an external network
 
 #   # MongoDB Services
 #   mongo_db_uatiz:
@@ -87,4 +83,4 @@ networks:
 
 # networks:
 #   default:
-#     name: ${DEV_DOCKER_NETWORK_NAME}
+#     name: ${PROD_DOCKER_NETWORK_NAME}
